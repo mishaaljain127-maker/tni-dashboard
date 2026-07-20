@@ -1,0 +1,416 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  background: #0f4c3a;
+  color: #fff;
+  line-height: 1.5;
+}
+
+.app {
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.app.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #d4af37;
+}
+
+/* Header */
+.app-header {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.countdown-duo {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.countdown {
+  background: rgba(212, 175, 55, 0.1);
+  border: 2px solid #d4af37;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  min-width: 140px;
+}
+
+.countdown-label {
+  font-size: 12px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.countdown-days {
+  font-size: 48px;
+  font-weight: 700;
+  color: #d4af37;
+  line-height: 1;
+}
+
+.countdown-date {
+  font-size: 14px;
+  color: #888;
+  margin-top: 0.5rem;
+}
+
+.countdown.hard-launch {
+  border-color: #e74c3c;
+  background: rgba(231, 76, 60, 0.1);
+}
+
+.countdown.hard-launch .countdown-days {
+  color: #e74c3c;
+}
+
+h1 {
+  font-size: 42px;
+  font-weight: 300;
+  color: #d4af37;
+  margin-bottom: 1.5rem;
+  letter-spacing: 2px;
+}
+
+/* View Toggle */
+.view-toggle {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.view-toggle button {
+  padding: 10px 24px;
+  border: 2px solid #444;
+  background: transparent;
+  color: #aaa;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.view-toggle button:hover {
+  border-color: #d4af37;
+  color: #d4af37;
+}
+
+.view-toggle button.active {
+  border-color: #d4af37;
+  background: #d4af37;
+  color: #0f4c3a;
+}
+
+/* TODAY'S VIEW */
+.today-view {
+  max-width: 100%;
+}
+
+.stats-bar {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stat-count {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-count.critical {
+  color: #e74c3c;
+}
+
+.stat-count.progress {
+  color: #f39c12;
+}
+
+.stat-count.done {
+  color: #27ae60;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Kanban Board */
+.board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  max-width: 100%;
+}
+
+.column {
+  background: rgba(20, 80, 60, 0.5);
+  border: 1px solid #1a5c46;
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-height: 500px;
+  transition: all 0.3s ease;
+}
+
+.column.dragging-over {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: #d4af37;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+}
+
+.column-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #d4af37;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #1a5c46;
+  padding-bottom: 1rem;
+}
+
+.tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.task {
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 4px solid #888;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: grab;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(5px);
+}
+
+.task:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.task.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.task.critical {
+  border-left-color: #e74c3c;
+  background: rgba(231, 76, 60, 0.1);
+}
+
+.task.high {
+  border-left-color: #f39c12;
+  background: rgba(243, 156, 18, 0.1);
+}
+
+.task-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.badge.critical {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.badge.high {
+  background: #f39c12;
+  color: #0f4c3a;
+}
+
+.task-domain {
+  font-size: 11px;
+  color: #aaa;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.task-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.task-owner {
+  font-size: 12px;
+  color: #d4af37;
+  font-weight: 500;
+}
+
+.empty {
+  font-size: 13px;
+  color: #666;
+  text-align: center;
+  padding: 2rem 1rem;
+  font-style: italic;
+}
+
+/* DOMAIN VIEW */
+.domain-view {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.domain-section {
+  background: rgba(20, 80, 60, 0.4);
+  border: 1px solid #1a5c46;
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.domain-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #1a5c46;
+  padding-bottom: 1rem;
+}
+
+.domain-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #d4af37;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.domain-counts {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.count {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.count.to-do {
+  background: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+}
+
+.count.in-progress {
+  background: rgba(243, 156, 18, 0.2);
+  color: #f39c12;
+}
+
+.count.done {
+  background: rgba(39, 174, 96, 0.2);
+  color: #27ae60;
+}
+
+.domain-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.domain-column {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid #1a5c46;
+  border-radius: 8px;
+  padding: 1.25rem;
+  min-height: 300px;
+  transition: all 0.3s ease;
+}
+
+.domain-column.dragging-over {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: #d4af37;
+}
+
+.domain-column h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #1a5c46;
+  padding-bottom: 0.75rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  .countdown-duo {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .board {
+    grid-template-columns: 1fr;
+  }
+
+  .countdown-days {
+    font-size: 36px;
+  }
+
+  .view-toggle {
+    flex-wrap: wrap;
+  }
+}
+
+/* No animations if user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
