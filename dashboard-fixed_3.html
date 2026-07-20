@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Nutrition Initiative - Workflow Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f4c3a;
+      color: #fff;
+      line-height: 1.5;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .countdown-duo {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .countdown {
+      background: rgba(212, 175, 55, 0.1);
+      border: 2px solid #d4af37;
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      min-width: 140px;
+    }
+
+    .countdown-label {
+      font-size: 12px;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .countdown-days {
+      font-size: 48px;
+      font-weight: 700;
+      color: #d4af37;
+      line-height: 1;
+    }
+
+    .countdown-date {
+      font-size: 14px;
+      color: #888;
+      margin-top: 0.5rem;
+    }
+
+    h1 {
+      font-size: 42px;
+      font-weight: 300;
+      color: #d4af37;
+      margin-bottom: 1.5rem;
+      letter-spacing: 2px;
+    }
+
+    .view-toggle {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .view-btn {
+      padding: 10px 24px;
+      border: 2px solid #444;
+      background: transparent;
+      color: #aaa;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .view-btn:hover {
+      border-color: #d4af37;
+      color: #d4af37;
+    }
+
+    .view-btn.active {
+      border-color: #d4af37;
+      background: #d4af37;
+      color: #0f4c3a;
+    }
+
+    .add-task-form {
+      background: rgba(20, 80, 60, 0.5);
+      border: 1px solid #1a5c46;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      color: #aaa;
+      text-transform: uppercase;
+    }
+
+    .add-task-form input, .add-task-form select {
+      padding: 8px 12px;
+      border: 1px solid #444;
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .add-task-form button {
+      padding: 10px 20px;
+      background: #d4af37;
+      color: #0f4c3a;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.3s;
+      white-space: nowrap;
+    }
+
+    .add-task-form button:hover {
+      background: #e8c547;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .column {
+      background: rgba(20, 80, 60, 0.5);
+      border: 1px solid #1a5c46;
+      border-radius: 12px;
+      padding: 1.5rem;
+      min-height: 400px;
+    }
+
+    .column-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #d4af37;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid #1a5c46;
+      padding-bottom: 1rem;
+    }
+
+    .tasks {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .task {
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 4px solid #888;
+      border-radius: 8px;
+      padding: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .task:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .task.critical {
+      border-left-color: #e74c3c;
+      background: rgba(231, 76, 60, 0.1);
+    }
+
+    .task.high {
+      border-left-color: #f39c12;
+      background: rgba(243, 156, 18, 0.1);
+    }
+
+    .task.low {
+      border-left-color: #3498db;
+      background: rgba(52, 152, 219, 0.1);
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+      gap: 0.5rem;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .badge.critical {
+      background: #e74c3c;
+      color: #fff;
+    }
+
+    .badge.high {
+      background: #f39c12;
+      color: #0f4c3a;
+    }
+
+    .badge.low {
+      background: #3498db;
+      color: #fff;
+    }
+
+    .task-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #fff;
+      line-height: 1.4;
+      margin-bottom: 0.5rem;
+    }
+
+    .task-meta {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 0.5rem;
+    }
+
+    .task-owner {
+      font-size: 12px;
+      color: #d4af37;
+      margin-bottom: 0.75rem;
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .task-actions select {
+      padding: 4px 6px;
+      font-size: 12px;
+      flex: 1;
+      background: rgba(212, 175, 55, 0.15);
+      border: 0.5px solid #d4af37;
+      color: #fff;
+      border-radius: 4px;
+    }
+
+    .task-actions button {
+      padding: 4px 8px;
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .task-actions button:hover {
+      background: #c0392b;
+    }
+
+    .empty {
+      font-size: 13px;
+      color: #666;
+      text-align: center;
+      padding: 2rem 1rem;
+      font-style: italic;
+    }
+
+    .domain-section {
+      margin-bottom: 3rem;
+      background: rgba(20, 80, 60, 0.4);
+      border: 1px solid #1a5c46;
+      border-radius: 12px;
+      padding: 2rem;
+    }
+
+    .domain-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #d4af37;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 1.5rem;
+    }
+
+    .domain-board {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .domain-column {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid #1a5c46;
+      border-radius: 8px;
+      padding: 1.25rem;
+      min-height: 300px;
+    }
+
+    .domain-column h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #1a5c46;
+      padding-bottom: 0.75rem;
+    }
+
+    .timeline {
+      background: rgba(20, 80, 60, 0.5);
+      border: 1px solid #1a5c46;
+      border-radius: 12px;
+      padding: 2rem;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid #1a5c46;
+    }
+
+    .timeline-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .timeline-date {
+      min-width: 100px;
+      font-weight: 600;
+      color: #d4af37;
+    }
+
+    .timeline-content {
+      flex: 1;
+    }
+
+    .timeline-content h3 {
+      font-size: 16px;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-content p {
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      
+      h1 {
+        font-size: 28px;
+      }
+
+      .countdown-duo {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .countdown-days {
+        font-size: 36px;
+      }
+
+      .add-task-form {
+        flex-direction: column;
+      }
+
+      .add-task-form input, .add-task-form select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="countdown-duo">
+        <div class="countdown">
+          <div class="countdown-label">Soft Launch</div>
+          <div class="countdown-days" id="softDays">75</div>
+          <div class="countdown-date">Sept 4</div>
+        </div>
+        <div class="countdown">
+          <div class="countdown-label">Hard Launch</div>
+          <div class="countdown-days" id="hardDays">140</div>
+          <div class="countdown-date">Nov 8</div>
+        </div>
+      </div>
+      <h1>The Nutrition Initiative</h1>
+      <div class="view-toggle">
+        <button class="view-btn active" id="todayBtn" onclick="showView('today')">Today's Focus</button>
+        <button class="view-btn" id="domainBtn" onclick="showView('domain')">By Domain</button>
+        <button class="view-btn" id="timelineBtn" onclick="showView('timeline')">Timeline</button>
+      </div>
+    </header>
+
+    <div id="addTaskForm" class="add-task-form">
+      <div class="form-group" style="flex: 2; min-width: 200px;">
+        <label>Task</label>
+        <input type="text" id="taskTitle" placeholder="Enter task...">
+      </div>
+      <div class="form-group">
+        <label>Domains (Ctrl+Click for multiple)</label>
+        <select id="taskDomain" multiple style="min-height: 100px;">
+          <option>Production</option>
+          <option>Compliance</option>
+          <option>Finance</option>
+          <option>Marketing</option>
+          <option>Sales</option>
+          <option>HR PR CR</option>
+          <option>R&D & Product Development</option>
+          <option>Purchasing & Sourcing</option>
+          <option>Strategy & Growth</option>
+          <option>Social Welfare</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Priority</label>
+        <select id="taskPriority">
+          <option>CRITICAL</option>
+          <option>HIGH</option>
+          <option>LOW</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Deadline</label>
+        <input type="date" id="taskDeadline">
+      </div>
+      <div class="form-group">
+        <label>Owner</label>
+        <input type="text" id="taskOwner" placeholder="Name">
+      </div>
+      <button onclick="addTask()">+ Add Task</button>
+    </div>
+
+    <!-- TODAY'S VIEW -->
+    <div id="todayView" class="board">
+      <div class="column">
+        <h2 class="column-title">To-Do</h2>
+        <div class="tasks" id="todoTasks"></div>
+      </div>
+      <div class="column">
+        <h2 class="column-title">In Progress</h2>
+        <div class="tasks" id="inProgressTasks"></div>
+      </div>
+      <div class="column">
+        <h2 class="column-title">Done</h2>
+        <div class="tasks" id="doneTasks"></div>
+      </div>
+    </div>
+
+    <!-- DOMAIN VIEW -->
+    <div id="domainView" class="hidden"></div>
+
+    <!-- TIMELINE VIEW -->
+    <div id="timelineView" class="hidden timeline"></div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAszp0716cg2NAeJH1DA9CmQjbXgpQ4kfE",
+      authDomain: "tni-workflow.firebaseapp.com",
+      databaseURL: "https://tni-workflow-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "tni-workflow",
+      storageBucket: "tni-workflow.firebasestorage.app",
+      messagingSenderId: "128606488909",
+      appId: "1:128606488909:web:faf53369ec6e1afa514f04"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let tasks = [];
+
+    function updateCountdowns() {
+      const today = new Date();
+      const softLaunch = new Date('2026-09-04');
+      const hardLaunch = new Date('2026-11-08');
+      
+      const softDays = Math.ceil((softLaunch - today) / (1000 * 60 * 60 * 24));
+      const hardDays = Math.ceil((hardLaunch - today) / (1000 * 60 * 60 * 24));
+      
+      document.getElementById('softDays').textContent = softDays;
+      document.getElementById('hardDays').textContent = hardDays;
+    }
+
+    function loadTasks() {
+      const tasksRef = db.ref('tasks');
+      tasksRef.on('value', (snapshot) => {
+        tasks = [];
+        snapshot.forEach((childSnapshot) => {
+          tasks.push({
+            id: childSnapshot.key,
+            ...childSnapshot.val()
+          });
+        });
+        renderAllViews();
+      });
+    }
+
+    function addTask() {
+      const title = document.getElementById('taskTitle').value;
+      const domains = Array.from(document.getElementById('taskDomain').selectedOptions).map(opt => opt.value);
+      const priority = document.getElementById('taskPriority').value;
+      const owner = document.getElementById('taskOwner').value;
+      const deadline = document.getElementById('taskDeadline').value;
+
+      if (!title.trim()) {
+        alert('Enter a task title');
+        return;
+      }
+
+      if (domains.length === 0) {
+        alert('Select at least one domain');
+        return;
+      }
+
+      if (!deadline) {
+        alert('Set a deadline');
+        return;
+      }
+
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Create separate task for each selected domain
+      domains.forEach(domain => {
+        const newTaskRef = db.ref('tasks').push();
+        newTaskRef.set({
+          id: newTaskRef.key,
+          title,
+          domain,
+          priority,
+          owner: owner || 'Unassigned',
+          status: 'to-do',
+          date: today,
+          deadline: deadline
+        });
+      });
+
+      document.getElementById('taskTitle').value = '';
+      document.getElementById('taskOwner').value = '';
+      document.getElementById('taskDeadline').value = '';
+      document.getElementById('taskDomain').selectedIndex = -1;
+    }
+
+    function deleteTask(id) {
+      if (confirm('Delete this task?')) {
+        db.ref(`tasks/${id}`).remove();
+      }
+    }
+
+    function updateTaskStatus(id, newStatus) {
+      db.ref(`tasks/${id}`).update({ status: newStatus });
+    }
+
+    function createTaskCard(task) {
+      return `
+        <div class="task ${task.priority.toLowerCase()}">
+          <div class="task-header">
+            <span class="badge ${task.priority.toLowerCase()}">${task.priority}</span>
+            <button onclick="deleteTask('${task.id}')" style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 18px; padding: 0;">×</button>
+          </div>
+          <p class="task-title">${task.title}</p>
+          <p class="task-meta">${task.domain}</p>
+          <p class="task-owner">@${task.owner}</p>
+          <div class="task-actions">
+            <select onchange="updateTaskStatus('${task.id}', this.value)">
+              <option value="to-do" ${task.status === 'to-do' ? 'selected' : ''}>To-Do</option>
+              <option value="in-progress" ${task.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+              <option value="done" ${task.status === 'done' ? 'selected' : ''}>Done</option>
+            </select>
+            <button onclick="deleteTask('${task.id}')">Delete</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function showView(viewName) {
+      // Hide all views
+      document.getElementById('todayView').classList.add('hidden');
+      document.getElementById('domainView').classList.add('hidden');
+      document.getElementById('timelineView').classList.add('hidden');
+
+      // Remove active from all buttons
+      document.getElementById('todayBtn').classList.remove('active');
+      document.getElementById('domainBtn').classList.remove('active');
+      document.getElementById('timelineBtn').classList.remove('active');
+
+      // Show selected view
+      if (viewName === 'today') {
+        document.getElementById('todayView').classList.remove('hidden');
+        document.getElementById('todayBtn').classList.add('active');
+      } else if (viewName === 'domain') {
+        document.getElementById('domainView').classList.remove('hidden');
+        document.getElementById('domainBtn').classList.add('active');
+      } else if (viewName === 'timeline') {
+        document.getElementById('timelineView').classList.remove('hidden');
+        document.getElementById('timelineBtn').classList.add('active');
+      }
+    }
+
+    function renderAllViews() {
+      renderTodayView();
+      renderDomainView();
+      renderTimelineView();
+    }
+
+    function renderTodayView() {
+      const today = new Date().toISOString().split('T')[0];
+      const todaysTasks = tasks.filter(t => t.date === today);
+
+      document.getElementById('todoTasks').innerHTML = todaysTasks
+        .filter(t => t.status === 'to-do')
+        .map(t => createTaskCard(t))
+        .join('') || '<p class="empty">All caught up</p>';
+
+      document.getElementById('inProgressTasks').innerHTML = todaysTasks
+        .filter(t => t.status === 'in-progress')
+        .map(t => createTaskCard(t))
+        .join('') || '<p class="empty">Start a task</p>';
+
+      document.getElementById('doneTasks').innerHTML = todaysTasks
+        .filter(t => t.status === 'done')
+        .map(t => createTaskCard(t))
+        .join('') || '<p class="empty">No wins yet</p>';
+    }
+
+    function renderDomainView() {
+      const domains = ['Production', 'Compliance', 'Finance', 'Marketing', 'Sales', 'HR PR CR', 'R&D & Product Development', 'Purchasing & Sourcing', 'Strategy & Growth', 'Social Welfare'];
+      
+      let html = '';
+      domains.forEach(domain => {
+        const domainTasks = tasks.filter(t => t.domain === domain);
+        if (domainTasks.length > 0) {
+          html += `
+            <div class="domain-section">
+              <div class="domain-header">
+                <h2>${domain}</h2>
+              </div>
+              <div class="domain-board">
+                <div class="domain-column">
+                  <h3>To-Do (${domainTasks.filter(t => t.status === 'to-do').length})</h3>
+                  <div class="tasks">
+                    ${domainTasks.filter(t => t.status === 'to-do').map(t => createTaskCard(t)).join('') || '<p class="empty">None</p>'}
+                  </div>
+                </div>
+                <div class="domain-column">
+                  <h3>In Progress (${domainTasks.filter(t => t.status === 'in-progress').length})</h3>
+                  <div class="tasks">
+                    ${domainTasks.filter(t => t.status === 'in-progress').map(t => createTaskCard(t)).join('') || '<p class="empty">None</p>'}
+                  </div>
+                </div>
+                <div class="domain-column">
+                  <h3>Done (${domainTasks.filter(t => t.status === 'done').length})</h3>
+                  <div class="tasks">
+                    ${domainTasks.filter(t => t.status === 'done').map(t => createTaskCard(t)).join('') || '<p class="empty">None</p>'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      });
+      document.getElementById('domainView').innerHTML = html || '<p class="empty">No tasks yet</p>';
+    }
+
+    function renderTimelineView() {
+      const sorted = [...tasks].sort((a, b) => {
+        const dateA = new Date(a.deadline || a.date);
+        const dateB = new Date(b.deadline || b.date);
+        return dateA - dateB;
+      });
+      
+      let html = '';
+      sorted.forEach(task => {
+        const deadlineDate = new Date(task.deadline);
+        const formattedDeadline = deadlineDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const isOverdue = deadlineDate < today && task.status !== 'done';
+        const daysLeft = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
+        
+        let urgency = '';
+        if (isOverdue) {
+          urgency = '<span style="color: #e74c3c; font-weight: bold;">⚠️ OVERDUE</span>';
+        } else if (daysLeft <= 3) {
+          urgency = `<span style="color: #f39c12;">⏰ ${daysLeft} days left</span>`;
+        } else {
+          urgency = `<span style="color: #aaa;">${daysLeft} days left</span>`;
+        }
+        
+        html += `
+          <div class="timeline-item">
+            <div class="timeline-date">${formattedDeadline}</div>
+            <div class="timeline-content">
+              <h3>${task.title}</h3>
+              <p><strong>${task.domain}</strong> • ${task.priority} • ${task.status}</p>
+              <p>Owner: ${task.owner}</p>
+              <p>${urgency}</p>
+            </div>
+          </div>
+        `;
+      });
+      document.getElementById('timelineView').innerHTML = html || '<p class="empty">No tasks yet</p>';
+    }
+
+    updateCountdowns();
+    loadTasks();
+  </script>
+</body>
+</html>
